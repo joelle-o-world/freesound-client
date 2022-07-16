@@ -1,58 +1,62 @@
 import axios, { AxiosInstance } from "axios";
-import open from "open";
-import { askQuestion } from "./askQuestion";
-import { getEnvironmentVariable } from "./getEnvironmentVariable";
 import qs from "qs";
 
 export class FreesoundClient {
   private axios: AxiosInstance;
   private clientId: string;
   private apiKey: string;
+  private accessToken?: string;
 
   /**
    * Asynchronously create a new authenticated api client.
    */
-  public static async connect(
-    clientId = getEnvironmentVariable("FREESOUND_API_CLIENT_ID"),
-    apiKey: string = getEnvironmentVariable("FREESOUND_API_KEY")
-  ): Promise<FreesoundClient> {
-    const instance = new FreesoundClient(clientId, apiKey);
-    await instance.doOauth();
-    return instance;
+  constructor(options: {
+    accessToken?: string;
+    apiKey: string;
+    clientId: string;
+  }) {
+    this.clientId = options.clientId;
+    this.apiKey = options.apiKey;
+    this.accessToken = options.accessToken;
+
+    if (this.accessToken) {
+      this.axios = axios.create({
+        baseURL: "https://freesound.org/apiv2",
+        timeout: 1000,
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      });
+    } else if (this.apiKey) {
+      this.axios = axios.create({
+        baseURL: "https://freesound.org/apiv2",
+        timeout: 1000,
+        headers: {
+          Authorization: `Token ${this.apiKey}`,
+        },
+      });
+    } else throw new Error("apiKey is required");
   }
 
-  private constructor(clientId: string, apiKey: string) {
-    this.clientId = clientId;
-    this.apiKey = apiKey;
-    this.axios = axios.create({
-      baseURL: "https://freesound.org/apiv2",
-      timeout: 1000,
-      headers: {
-        Authorization: `Token ${apiKey}`,
-      },
-    });
+  async testConnection(): Promise<boolean> {
+    try {
+      await this.axios.get("me");
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
-  async doOauth() {
-    const authorizationCode = await this.loginWithBrowser();
-    const access_token = await this.createAccessToken(authorizationCode);
+  loginPageUrl() {
+    if (this.clientId)
+      return this.axios.getUri({
+        url: "oauth2/authorize/",
+        params: { client_id: this.clientId, response_type: "code" },
+      });
+    else throw "Cannot get login page url without client id";
   }
 
-  async loginWithBrowser(): Promise<string> {
-    const url = this.axios.getUri({
-      url: "oauth2/authorize/",
-      params: { client_id: this.clientId, response_type: "code" },
-    });
-    console.log("Opening browser...");
-    open(url);
-    const authcode = await askQuestion(
-      "Please enter the authorization code from the browser: "
-    );
-
-    return authcode;
-  }
-
-  private async createAccessToken(authorizationCode: string) {
+  public async createAccessToken(authorizationCode: string) {
     try {
       const response = await this.axios.post(
         "oauth2/access_token",
@@ -63,7 +67,7 @@ export class FreesoundClient {
           code: authorizationCode,
         })
       );
-      console.log(response.data);
+      return response.data;
     } catch (err: any) {
       console.error("Unable to oauth2 access token:", err.response.data);
       console.error("Request:", err.request);
@@ -71,7 +75,3 @@ export class FreesoundClient {
     }
   }
 }
-
-FreesoundClient.connect().then(async (freesound) => {
-  console.log("done");
-});

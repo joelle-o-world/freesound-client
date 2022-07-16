@@ -1,6 +1,6 @@
 import { homedir } from "os";
 import { resolve } from "path";
-import { readFile, writeFile } from "fs";
+import { readFile, writeFile, existsSync } from "fs";
 import { askQuestion } from "./askQuestion";
 
 /**
@@ -18,9 +18,9 @@ export class RCFile<T extends Record<string, unknown>> {
       parse = JSON.parse,
       stringify = JSON.stringify,
     }: {
-      parse: (str: string) => any;
-      stringify: (config: any) => string;
-    }
+      parse?: (str: string) => any;
+      stringify?: (config: any) => string;
+    } = {}
   ) {
     this.filepath = resolve(homedir(), `.${packageName}rc`);
     this.parse = parse;
@@ -28,18 +28,20 @@ export class RCFile<T extends Record<string, unknown>> {
   }
 
   read(): Promise<T> {
-    return new Promise((fulfil, reject) =>
-      readFile(this.filepath, { encoding: "utf-8" }, (err, contents) => {
-        if (err) reject(err);
-        else
-          try {
-            const config = this.parse(contents);
-            fulfil(config);
-          } catch (err) {
-            reject(err);
-          }
-      })
-    );
+    return new Promise((fulfil, reject) => {
+      if (existsSync(this.filepath))
+        readFile(this.filepath, { encoding: "utf-8" }, (err, contents) => {
+          if (err) reject(err);
+          else
+            try {
+              const config = this.parse(contents);
+              fulfil(config);
+            } catch (err) {
+              reject(err);
+            }
+        });
+      else fulfil({} as T);
+    });
   }
 
   write(config: T): Promise<void> {
@@ -60,9 +62,9 @@ export class RCFile<T extends Record<string, unknown>> {
   }
 
   // TODO: Use typescript to indicate that this must only be used with string fields
-  async askForField(
+  async askAndStore(
     key: string,
-    question = `Please enter value for "${key}: "`
+    question = `Please enter value for '${key}': `
   ): Promise<string> {
     const config = await this.read();
     if (config[key]) return config[key] as string;
