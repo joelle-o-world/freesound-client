@@ -77,6 +77,27 @@ export class FreesoundClient {
     }
   }
 
+  public async refreshAccessToken(refreshToken: string) {
+    try {
+      const response = await this.axios.post(
+        "oauth2/access_token",
+        qs.stringify({
+          client_id: this.clientId,
+          client_secret: this.apiKey,
+          grant_type: "refresh_token",
+          refresh_token: refreshToken,
+        })
+      );
+      return {
+        accessToken: response.data.accessToken,
+        newRefreshToken: response.data.refresh_token,
+      };
+    } catch (err) {
+      console.error("Error refreshing access token:", err);
+      return null;
+    }
+  }
+
   async me() {
     return (await this.axios.get("me")).data;
   }

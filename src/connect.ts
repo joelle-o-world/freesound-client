@@ -21,7 +21,10 @@ export async function login(): Promise<FreesoundClient> {
     (await loginWithRefreshToken()) ||
     (await loginWithBrowser());
   if (freesound) return freesound;
-  else throw "Unable to connect";
+  else {
+    console.error("Unable to connect to Freesound API");
+    throw "Unable to connect";
+  }
 }
 
 async function loginWithAccessToken(): Promise<FreesoundClient | null> {
@@ -37,9 +40,23 @@ async function loginWithAccessToken(): Promise<FreesoundClient | null> {
   return null;
 }
 
-async function loginWithRefreshToken() {
-  // TODO: Implement!
-  return null;
+async function loginWithRefreshToken(): Promise<FreesoundClient | null> {
+  const clientId = await rcfile.askAndStore("clientId");
+  const apiKey = await rcfile.askAndStore("apiKey");
+  const { refreshToken } = await rcfile.read();
+  if (!refreshToken) return null;
+  else {
+    const freesound = new FreesoundClient({ clientId, apiKey });
+    const response = await freesound.refreshAccessToken(refreshToken);
+    if (!response) return null;
+    else {
+      const { accessToken, newRefreshToken } = response;
+      await rcfile.set("accessToken", accessToken);
+      await rcfile.set("refreshToken", newRefreshToken);
+
+      return await loginWithAccessToken();
+    }
+  }
 }
 
 async function loginWithBrowser(): Promise<FreesoundClient | null> {
