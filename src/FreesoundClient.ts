@@ -1,4 +1,6 @@
 import axios, { AxiosInstance } from "axios";
+import { createWriteStream } from "fs";
+import { resolve } from "path";
 import qs from "qs";
 
 export class FreesoundClient {
@@ -73,5 +75,51 @@ export class FreesoundClient {
       console.error("Request:", err.request);
       throw err;
     }
+  }
+
+  async me() {
+    return (await this.axios.get("me")).data;
+  }
+
+  async mySounds() {
+    const uri = (await this.me()).sounds;
+    console.log(uri);
+    return (await this.axios.get(uri)).data;
+  }
+
+  private async *page(...args: Parameters<typeof this.axios.get>) {
+    let response = await this.axios.get(...args);
+    for (let result of response.data.results) yield result;
+
+    while (response.data.next) {
+      response = await this.axios.get(response.data.next);
+      for (let result of response.data.results) yield result;
+    }
+  }
+
+  async *search(searchText: string) {
+    return this.page("search/text", {
+      params: { query: searchText },
+    });
+  }
+
+  async soundInfo(soundId: string) {
+    let response = await this.axios.get(`sounds/${soundId}`);
+    return response.data;
+  }
+
+  async downloadLink(soundId: string) {
+    const soundInfo = await this.soundInfo(soundId);
+    return soundInfo.download;
+  }
+
+  async download(soundId: string) {
+    const soundInfo = await this.soundInfo(soundId);
+    const uri = soundInfo.download;
+    const extension = soundInfo.type;
+    const filename = `${soundId}-${soundInfo.username}-${soundInfo.name}.${extension}`;
+    const response = await this.axios.get(uri, { responseType: "stream" });
+
+    return { suggestedFilename: filename, stream: response.data };
   }
 }

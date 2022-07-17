@@ -15,12 +15,13 @@ const rcfile = new RCFile<{
   clientId: string;
 }>("freesound");
 
-export async function login(): Promise<FreesoundClient | null> {
-  return (
+export async function login(): Promise<FreesoundClient> {
+  const freesound =
     (await loginWithAccessToken()) ||
     (await loginWithRefreshToken()) ||
-    (await loginWithBrowser())
-  );
+    (await loginWithBrowser());
+  if (freesound) return freesound;
+  else throw "Unable to connect";
 }
 
 async function loginWithAccessToken(): Promise<FreesoundClient | null> {
