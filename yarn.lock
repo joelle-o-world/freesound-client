@@ -52,6 +52,13 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.0.5.tgz#96be8113b014e9e7f0c3609c4a25afadd85ff659"
   integrity sha512-En7tneq+j0qAiVwysBD79y86MT3ModuoIJbe7JXp+sb5UAjInSShmK3nXXMioBzfF7rXC12hv12d4IyCVwN4dA==
 
+"@types/play-sound@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/play-sound/-/play-sound-1.1.0.tgz#fc60ea73d09100df7ccd2e54707edcebc6546289"
+  integrity sha512-v+ggBleNpLah+RDTuyFsYjBGnAwULcJD2mjdP/X4ICsu3HPcOmCktZnfgwQ9UECS+01d5MCm1+YYip2R/iIX0g==
+  dependencies:
+    "@types/node" "*"
+
 "@types/qs@^6.9.7":
   version "6.9.7"
   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"
@@ -144,6 +151,11 @@ end-of-stream@~1.4.1:
   dependencies:
     once "^1.4.0"
 
+find-exec@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/find-exec/-/find-exec-1.0.2.tgz#dd90e77ef50ab380bdb2f6cc508a386606f3d3bd"
+  integrity sha512-/cs763F5i7Nm/aG+hjBv2nJB/Bl2w0tnuZd5bbfcV+WYapn8T4ez3B87H6MgvsmdheDkitj/rHi557wvE+XylQ==
+
 follow-redirects@^1.14.9:
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.1.tgz#0ca6a452306c9b276e4d3127483e29575e207ad5"
@@ -233,6 +245,13 @@ open@^8.4.0:
     define-lazy-prop "^2.0.0"
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
+
+play-sound@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/play-sound/-/play-sound-1.1.5.tgz#5b44aa0ed59e2ec2f80710210ed783c79b6fb854"
+  integrity sha512-gbdF1iLNyL5r9Ne9YwARGMkrvfR4EL9G1ZLtFPLkI2tQt0kkHw5CHM5E6Gl/lDuuk/Uj/O5Q29Bi08jMK4egbA==
+  dependencies:
+    find-exec "1.0.2"
 
 qs@^6.11.0:
   version "6.11.0"
