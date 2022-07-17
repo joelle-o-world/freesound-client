@@ -97,7 +97,7 @@ export class FreesoundClient {
     }
   }
 
-  async *search(searchText: string) {
+  search(searchText: string) {
     return this.page("search/text", {
       params: { query: searchText },
     });

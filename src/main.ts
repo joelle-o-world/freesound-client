@@ -1,4 +1,4 @@
-#! /usr/local/bin/ts-node
+#! /usr/local/bin/node
 
 import { login } from "./connect";
 import YAML from "yaml";

@@ -16,7 +16,7 @@ export class RCFile<T extends Record<string, unknown>> {
     packageName: string,
     {
       parse = JSON.parse,
-      stringify = JSON.stringify,
+      stringify = (o) => JSON.stringify(o, null, 2),
     }: {
       parse?: (str: string) => any;
       stringify?: (config: any) => string;
