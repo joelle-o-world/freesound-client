@@ -33,6 +33,17 @@ const rcfile = new RCFile("freesound");
     return savePath;
   }
 
+  let player: ReturnType<typeof createPlayer>;
+  async function play(file: string) {
+    return new Promise<void>((fulfil, reject) => {
+      if (!player) player = createPlayer();
+      player.play(file, (err) => {
+        if (err) reject(err);
+        else fulfil();
+      });
+    });
+  }
+
   const subArgs = process.argv.slice(3);
   switch (command) {
     case "whoami":
@@ -69,10 +80,18 @@ const rcfile = new RCFile("freesound");
 
     case "play":
       const savePath = await download(subArgs[0]);
-      const player = createPlayer();
-      player.play(savePath, (err) => {
-        console.log("done!");
-      });
+      console.log("Now playing", savePath);
+      await play(savePath);
+      break;
+
+    case "search-and-play":
+      for await (const result of freesound.search(subArgs[0])) {
+        console.log(`${result.id} -> ${result.name}`);
+        console.log("\tDownloading...");
+        const file = await download(result.id);
+        console.log("\tPlaying...");
+        await play(file);
+      }
       break;
 
     default:
