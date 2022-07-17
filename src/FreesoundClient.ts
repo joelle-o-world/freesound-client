@@ -3,6 +3,8 @@ import { createWriteStream } from "fs";
 import { resolve } from "path";
 import qs from "qs";
 
+const timeout = 5000;
+
 export class FreesoundClient {
   private axios: AxiosInstance;
   private clientId: string;
@@ -24,7 +26,7 @@ export class FreesoundClient {
     if (this.accessToken) {
       this.axios = axios.create({
         baseURL: "https://freesound.org/apiv2",
-        timeout: 1000,
+        timeout,
         headers: {
           Authorization: `Bearer ${this.accessToken}`,
         },
@@ -32,7 +34,7 @@ export class FreesoundClient {
     } else if (this.apiKey) {
       this.axios = axios.create({
         baseURL: "https://freesound.org/apiv2",
-        timeout: 1000,
+        timeout,
         headers: {
           Authorization: `Token ${this.apiKey}`,
         },
@@ -109,19 +111,25 @@ export class FreesoundClient {
   }
 
   private async *page(...args: Parameters<typeof this.axios.get>) {
-    let response = await this.axios.get(...args);
-    for (let result of response.data.results) yield result;
-
-    while (response.data.next) {
-      response = await this.axios.get(response.data.next);
+    try {
+      let response = await this.axios.get(...args);
       for (let result of response.data.results) yield result;
+
+      while (response.data.next) {
+        response = await this.axios.get(response.data.next);
+        for (let result of response.data.results) yield result;
+      }
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
   }
 
-  search(searchText: string) {
-    return this.page("search/text", {
+  async *search(searchText: string) {
+    for await (let result of this.page("search/text", {
       params: { query: searchText },
-    });
+    }))
+      yield result;
   }
 
   async soundInfo(soundId: string) {
@@ -137,10 +145,7 @@ export class FreesoundClient {
   async download(soundId: string) {
     const soundInfo = await this.soundInfo(soundId);
     const uri = soundInfo.download;
-    const extension = soundInfo.type;
-    const filename = `${soundId}-${soundInfo.username}-${soundInfo.name}.${extension}`;
     const response = await this.axios.get(uri, { responseType: "stream" });
-
-    return { suggestedFilename: filename, stream: response.data };
+    return { type: soundInfo.type, stream: response.data };
   }
 }

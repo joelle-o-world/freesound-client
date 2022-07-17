@@ -4,7 +4,7 @@ import { login } from "./connect";
 import YAML from "yaml";
 import { RCFile } from "./rw-rc";
 import { resolve } from "path";
-import { createWriteStream } from "fs";
+import { createWriteStream, existsSync } from "fs";
 import createPlayer from "play-sound";
 
 const command = process.argv[2];
@@ -15,15 +15,20 @@ const rcfile = new RCFile("freesound");
   const freesound = await login();
 
   async function download(soundId: string) {
-    const { suggestedFilename, stream } = await freesound.download(soundId);
+    const { type, stream } = await freesound.download(soundId);
+
     const saveDir = await rcfile.askAndStore("saveLocation");
-    const savePath = resolve(saveDir, suggestedFilename);
-    const writer = createWriteStream(savePath);
-    stream.pipe(writer);
-    await new Promise<void>((fulfil, reject) => {
-      writer.on("close", () => fulfil());
-      writer.on("error", (err) => reject(err));
-    });
+    const filename = `${soundId}.${type}`;
+    const savePath = resolve(saveDir, filename);
+
+    if (!existsSync(savePath)) {
+      const writer = createWriteStream(savePath);
+      stream.pipe(writer);
+      await new Promise<void>((fulfil, reject) => {
+        writer.on("close", () => fulfil());
+        writer.on("error", (err) => reject(err));
+      });
+    }
 
     return savePath;
   }
@@ -40,8 +45,10 @@ const rcfile = new RCFile("freesound");
 
     case "search":
       // TODO: Output as a string
+      let limit = 20;
       for await (const result of freesound.search(subArgs[0])) {
-        console.log(result);
+        console.log(`${result.id} - ${result.name}`);
+        if (--limit == 0) break;
       }
       break;
 
