@@ -3,8 +3,8 @@
 import { login } from "./connect";
 import YAML from "yaml";
 import { RCFile } from "./rw-rc";
-import { resolve } from "path";
-import { createWriteStream, existsSync } from "fs";
+import path, { basename, resolve } from "path";
+import { createReadStream, createWriteStream, existsSync } from "fs";
 import createPlayer from "play-sound";
 
 const command = process.argv[2];
@@ -92,6 +92,19 @@ const rcfile = new RCFile("freesound");
         console.log("\tPlaying...");
         await play(file);
       }
+      break;
+
+    case "upload":
+      const [file] = subArgs;
+      const filepath = resolve(file);
+      const filename = basename(filepath);
+      console.log("Trying to upload", filepath);
+      const stream = createReadStream(filepath);
+      freesound.upload(stream, {
+        name: filename,
+        description: "A sound uploaded with freesound cli",
+        tags: ["generative", "synth", ...path.parse(filename).name.split(/\W/)],
+      });
       break;
 
     default:

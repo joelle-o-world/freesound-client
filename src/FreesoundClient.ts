@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
-import { createWriteStream } from "fs";
-import { resolve } from "path";
 import qs from "qs";
+import FormData from "form-data";
+import { Readable } from "stream";
 
 const timeout = 5000;
 
@@ -147,5 +147,32 @@ export class FreesoundClient {
     const uri = soundInfo.download;
     const response = await this.axios.get(uri, { responseType: "stream" });
     return { type: soundInfo.type, stream: response.data };
+  }
+
+  async upload(
+    stream: Readable,
+    options: {
+      name: string;
+      license?:
+        | "Attribution"
+        | "Attribution Noncommercial"
+        | "Creative Commons 0";
+      description: string;
+      tags: string[];
+    }
+  ) {
+    const form = new FormData();
+    form.append("name", options.name);
+    form.append("license", options.license || "Attribution");
+    form.append("audiofile", stream);
+    form.append("description", options.description);
+    form.append("tags", options.tags.join(" "));
+
+    try {
+      await this.axios.post("sounds/upload/", form);
+    } catch (err: any) {
+      console.log(err.response.data);
+      throw err;
+    }
   }
 }
