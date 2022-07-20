@@ -95,16 +95,22 @@ const rcfile = new RCFile("freesound");
       break;
 
     case "upload":
-      const [file] = subArgs;
-      const filepath = resolve(file);
-      const filename = basename(filepath);
-      console.log("Trying to upload", filepath);
-      const stream = createReadStream(filepath);
-      freesound.upload(stream, {
-        name: filename,
-        description: "A sound uploaded with freesound cli",
-        tags: ["generative", "synth", ...path.parse(filename).name.split(/\W/)],
-      });
+      const [...files] = subArgs;
+      for (const file of files) {
+        const filepath = resolve(file);
+        const filename = basename(filepath);
+        console.log("Trying to upload", filepath);
+        const stream = createReadStream(filepath);
+        await freesound.upload(stream, {
+          name: filename,
+          description: "A sound uploaded with freesound cli",
+          tags: [
+            "generative",
+            "synth",
+            ...path.parse(filename).name.split(/\W/),
+          ],
+        });
+      }
       break;
 
     default:
