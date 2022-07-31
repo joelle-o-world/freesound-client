@@ -104,11 +104,7 @@ const rcfile = new RCFile("freesound");
         await freesound.upload(stream, {
           name: filename,
           description: "A sound uploaded with freesound cli",
-          tags: [
-            "generative",
-            "synth",
-            ...path.parse(filename).name.split(/\W/),
-          ],
+          tags: [...path.parse(filename).name.split(/\W/)],
         });
       }
       break;
