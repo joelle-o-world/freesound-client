@@ -1,8 +1,21 @@
-export * from "./whoami";
-export * from "./search";
-export * from "./searchAndPlay";
-export * from "./sound-info";
-export * from "./download";
-export * from "./play";
-export * from "./upload";
-export * from "./packInfo";
+import { Command } from "commander";
+import { searchAndPlay } from "./searchAndPlay";
+import { mySounds, whoami } from "./whoami";
+import { search } from "./search";
+import { download } from "./download";
+import { upload } from "./upload";
+import { pack } from "./packInfo";
+import { play } from "./play";
+import { info, uri } from "./sound-info";
+
+export const program = new Command()
+  .addCommand(whoami)
+  .addCommand(mySounds)
+  .addCommand(search)
+  .addCommand(searchAndPlay)
+  .addCommand(info)
+  .addCommand(uri)
+  .addCommand(download)
+  .addCommand(upload)
+  .addCommand(pack)
+  .addCommand(play);
