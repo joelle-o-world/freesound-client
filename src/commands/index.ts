@@ -6,6 +6,8 @@ import all from "it-all";
 import { download as nodeDownload } from "../node-download";
 import { play as nodePlay } from "../play";
 
+export * from "./help";
+
 export async function whoami() {
   console.log(YAML.stringify((await (await login()).me()).username));
 }

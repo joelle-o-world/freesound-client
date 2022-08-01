@@ -1,8 +1,5 @@
 #! /usr/local/bin/node
 
-let about =
-  "Unofficial Freesound CLI\nhttps://github.com/joelyjoel/freesound-client";
-
 import * as commands from "./commands";
 
 (async function main() {
@@ -10,8 +7,7 @@ import * as commands from "./commands";
   const subArgs = process.argv.slice(3);
 
   if (!command) {
-    console.log(about);
-    return 0;
+    return commands.help();
   }
 
   // @ts-ignore
