@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
-    "build": "yarn tsc"
+    "build": "yarn tsc",
+    "dev": "yarn tsc -w"
   },
   "bin": {
     "freesound": "./bin/main.js"
