@@ -6,3 +6,4 @@ export * from "./sound-info";
 export * from "./download";
 export * from "./play";
 export * from "./upload";
+export * from "./packInfo";

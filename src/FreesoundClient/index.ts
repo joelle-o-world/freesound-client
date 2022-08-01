@@ -175,4 +175,8 @@ export class FreesoundClient {
       throw err;
     }
   }
+
+  public async packInfo(packId: string) {
+    return await this.axios.get(`packs/${packId}`);
+  }
 }
