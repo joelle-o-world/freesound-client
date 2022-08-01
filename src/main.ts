@@ -6,6 +6,7 @@ import { RCFile } from "./rw-rc";
 import path, { basename, resolve } from "path";
 import { createReadStream, createWriteStream, existsSync } from "fs";
 import createPlayer from "play-sound";
+import all from "it-all";
 
 const command = process.argv[2];
 
@@ -53,7 +54,7 @@ const rcfile = new RCFile("freesound");
       break;
 
     case "my-sounds":
-      console.log(YAML.stringify(await (await freesound).mySounds()));
+      console.log(YAML.stringify(await all((await freesound).mySounds())));
       break;
 
     case "search":
