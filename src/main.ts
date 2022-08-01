@@ -3,38 +3,14 @@
 import { login } from "./connect";
 import YAML from "yaml";
 import path, { basename, resolve } from "path";
-import { createReadStream, createWriteStream } from "fs";
+import { createReadStream } from "fs";
 import createPlayer from "play-sound";
 import all from "it-all";
-import glob from "glob-promise";
-import { rcfile } from "./config";
+import { download } from "./node-download";
 
 const command = process.argv[2];
 
 (async function main() {
-  async function download(soundId: string) {
-    const saveDir = await rcfile.askAndStore("saveLocation");
-    const pattern = `${resolve(saveDir)}/${soundId}.*`;
-    const matches = await glob(pattern);
-
-    if (matches.length) {
-      // Already exists
-      return matches[0];
-    } else {
-      const { type, stream } = await (await login()).download(soundId);
-      const filename = `${soundId}.${type}`;
-      const savePath = resolve(saveDir, filename);
-      const writer = createWriteStream(savePath);
-      stream.pipe(writer);
-      await new Promise<void>((fulfil, reject) => {
-        writer.on("close", () => fulfil());
-        writer.on("error", (err) => reject(err));
-      });
-
-      return savePath;
-    }
-  }
-
   let player: ReturnType<typeof createPlayer>;
   async function play(file: string) {
     return new Promise<void>((fulfil, reject) => {
