@@ -4,24 +4,13 @@ import { login } from "./connect";
 import YAML from "yaml";
 import path, { basename, resolve } from "path";
 import { createReadStream } from "fs";
-import createPlayer from "play-sound";
 import all from "it-all";
 import { download } from "./node-download";
+import { play } from "./play";
 
 const command = process.argv[2];
 
 (async function main() {
-  let player: ReturnType<typeof createPlayer>;
-  async function play(file: string) {
-    return new Promise<void>((fulfil, reject) => {
-      if (!player) player = createPlayer();
-      player.play(file, (err) => {
-        if (err) reject(err);
-        else fulfil();
-      });
-    });
-  }
-
   const subArgs = process.argv.slice(3);
   // TODO: Move the command definitions to external module
   switch (command) {
