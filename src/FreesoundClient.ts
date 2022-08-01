@@ -104,10 +104,10 @@ export class FreesoundClient {
     return (await this.axios.get("me")).data;
   }
 
-  async mySounds() {
+  async *mySounds() {
     const uri = (await this.me()).sounds;
     console.log(uri);
-    return (await this.axios.get(uri)).data;
+    for await (const result of this.page(uri)) yield result;
   }
 
   private async *page(...args: Parameters<typeof this.axios.get>) {
