@@ -1,5 +1,12 @@
 #! /usr/local/bin/node
 
+const help = `
+Unofficial Freesound CLI
+`;
+function showHelp() {
+  console.log(help);
+}
+
 import { login } from "./connect";
 import YAML from "yaml";
 import { RCFile } from "./rw-rc";
@@ -49,6 +56,11 @@ const rcfile = new RCFile("freesound");
   const subArgs = process.argv.slice(3);
   // TODO: Move the command definitions to external module
   switch (command) {
+    case undefined:
+    case "":
+      showHelp();
+      break;
+
     case "whoami":
       console.log(YAML.stringify((await freesound.me()).username));
       break;
