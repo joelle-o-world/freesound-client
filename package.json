@@ -16,6 +16,8 @@
     "@types/stream-to-promise": "^2.2.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
+    "glob": "^8.0.3",
+    "glob-promise": "^5.0.0",
     "open": "^8.4.0",
     "play-sound": "^1.1.5",
     "qs": "^6.11.0",
