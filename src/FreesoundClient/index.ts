@@ -179,4 +179,8 @@ export class FreesoundClient {
   public async packInfo(packId: string) {
     return await this.axios.get(`packs/${packId}`);
   }
+
+  public listSoundsInPack(packId: string) {
+    return this.page(`packs/${packId}/sounds`);
+  }
 }
