@@ -2,16 +2,14 @@
 
 import { login } from "./connect";
 import YAML from "yaml";
-import { RCFile } from "./rw-rc";
 import path, { basename, resolve } from "path";
 import { createReadStream, createWriteStream } from "fs";
 import createPlayer from "play-sound";
 import all from "it-all";
 import glob from "glob-promise";
+import { rcfile } from "./config";
 
 const command = process.argv[2];
-
-const rcfile = new RCFile("freesound");
 
 (async function main() {
   async function download(soundId: string) {
