@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { searchAndPlay } from "./searchAndPlay";
-import { mySounds, whoami } from "./whoami";
+import { my, whoami } from "./whoami";
 import { search } from "./search";
 import { download } from "./download";
 import { upload } from "./upload";
@@ -10,7 +10,7 @@ import { info, uri } from "./sound-info";
 
 export const program = new Command()
   .addCommand(whoami)
-  .addCommand(mySounds)
+  .addCommand(my)
   .addCommand(search)
   .addCommand(searchAndPlay)
   .addCommand(info)

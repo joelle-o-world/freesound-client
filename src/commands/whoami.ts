@@ -9,8 +9,19 @@ export const whoami = new Command("whoami")
     console.log(YAML.stringify((await (await login()).me()).username));
   });
 
-export const mySounds = new Command("my-sounds")
+export const sounds = new Command("sounds")
   .description("List your own uploaded freesound samples")
   .action(async () => {
     console.log(YAML.stringify(await all((await login()).mySounds())));
   });
+
+const username = new Command("username")
+  .description("Get the username of the currently logged in freesound user")
+  .action(async () => {
+    console.log(YAML.stringify((await (await login()).me()).username));
+  });
+
+export const my = new Command("my")
+  .addCommand(sounds)
+  .addCommand(whoami)
+  .addCommand(username);
