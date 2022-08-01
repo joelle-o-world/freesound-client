@@ -1,4 +1,3 @@
-export * from "./help";
 export * from "./whoami";
 export * from "./search";
 export * from "./searchAndPlay";

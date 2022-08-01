@@ -12,7 +12,7 @@ export const pack = new Command()
   });
 
 export const packList = new Command()
-  .name("packList")
+  .name("pack-list")
   .argument("<pack-id>")
   .action(async (packId) => {
     const packInfo = packId;

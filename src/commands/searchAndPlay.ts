@@ -4,7 +4,7 @@ import { download as nodeDownload } from "../node-download";
 import { play as nodePlay } from "../play";
 
 export const searchAndPlay = new Command()
-  .name("searchAndPlay")
+  .name("search-and-play")
   .argument("<query>")
   .action(async (query) => {
     for await (const result of (await login()).search(query)) {
