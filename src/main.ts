@@ -12,6 +12,7 @@ const command = process.argv[2];
 const rcfile = new RCFile("freesound");
 
 (async function main() {
+  // TODO: Delay this step until it is needed (laziness)
   const freesound = await login();
 
   async function download(soundId: string) {
@@ -21,6 +22,7 @@ const rcfile = new RCFile("freesound");
     const filename = `${soundId}.${type}`;
     const savePath = resolve(saveDir, filename);
 
+    // TODO: Check if file exists without fetching the filename from the freesound api
     if (!existsSync(savePath)) {
       const writer = createWriteStream(savePath);
       stream.pipe(writer);
@@ -28,7 +30,7 @@ const rcfile = new RCFile("freesound");
         writer.on("close", () => fulfil());
         writer.on("error", (err) => reject(err));
       });
-    }
+    } else process.stderr.write("Using cached sample\n");
 
     return savePath;
   }
@@ -45,6 +47,7 @@ const rcfile = new RCFile("freesound");
   }
 
   const subArgs = process.argv.slice(3);
+  // TODO: Move the command definitions to external module
   switch (command) {
     case "whoami":
       console.log(YAML.stringify((await freesound.me()).username));
