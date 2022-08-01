@@ -4,9 +4,10 @@ import { login } from "./connect";
 import YAML from "yaml";
 import { RCFile } from "./rw-rc";
 import path, { basename, resolve } from "path";
-import { createReadStream, createWriteStream, existsSync } from "fs";
+import { createReadStream, createWriteStream } from "fs";
 import createPlayer from "play-sound";
 import all from "it-all";
+import glob from "glob-promise";
 
 const command = process.argv[2];
 
@@ -16,23 +17,26 @@ const rcfile = new RCFile("freesound");
   const freesound = login();
 
   async function download(soundId: string) {
-    const { type, stream } = await (await freesound).download(soundId);
-
     const saveDir = await rcfile.askAndStore("saveLocation");
-    const filename = `${soundId}.${type}`;
-    const savePath = resolve(saveDir, filename);
+    const pattern = `${resolve(saveDir)}/${soundId}.*`;
+    const matches = await glob(pattern);
 
-    // TODO: Check if file exists without fetching the filename from the freesound api
-    if (!existsSync(savePath)) {
+    if (matches.length) {
+      // Already exists
+      return matches[0];
+    } else {
+      const { type, stream } = await (await freesound).download(soundId);
+      const filename = `${soundId}.${type}`;
+      const savePath = resolve(saveDir, filename);
       const writer = createWriteStream(savePath);
       stream.pipe(writer);
       await new Promise<void>((fulfil, reject) => {
         writer.on("close", () => fulfil());
         writer.on("error", (err) => reject(err));
       });
-    } else process.stderr.write("Using cached sample\n");
 
-    return savePath;
+      return savePath;
+    }
   }
 
   let player: ReturnType<typeof createPlayer>;
@@ -78,6 +82,7 @@ const rcfile = new RCFile("freesound");
 
     case "download":
       console.log(await download(subArgs[0]));
+      // TODO: --no-cache flag to disable caching downloads
 
       break;
 
