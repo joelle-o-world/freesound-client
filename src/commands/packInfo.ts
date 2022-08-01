@@ -5,6 +5,7 @@ import { Command } from "commander";
 export const pack = new Command()
   .name("pack")
   .argument("<pack-id>")
+  .description("Get metadata about a sample pack")
   .action(async (packId) => {
     const freesound = await login();
     const response = await freesound.packInfo(packId);
@@ -13,6 +14,7 @@ export const pack = new Command()
 
 export const packList = new Command()
   .name("pack-list")
+  .description("List all the sounds in a sample pack")
   .argument("<pack-id>")
   .action(async (packId) => {
     const packInfo = packId;

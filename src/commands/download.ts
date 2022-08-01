@@ -6,6 +6,7 @@ import { download as nodeDownload } from "../node-download";
 export const download = new Command()
   .name("download")
   .argument("<sound-id>", "ID of the sound to play")
+  .description("Download a sample")
   .action(async (soundId) => {
     console.log(await nodeDownload(soundId));
   });

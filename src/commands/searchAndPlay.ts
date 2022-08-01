@@ -5,6 +5,7 @@ import { play as nodePlay } from "../play";
 
 export const searchAndPlay = new Command()
   .name("search-and-play")
+  .description("Search the freesound database and play each result in sequence")
   .argument("<query>")
   .action(async (query) => {
     for await (const result of (await login()).search(query)) {

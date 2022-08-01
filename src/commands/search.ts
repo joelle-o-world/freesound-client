@@ -5,6 +5,7 @@ import { login } from "../connect";
 
 export const search = new Command()
   .name("search")
+  .description("Search the freesound sample database")
   .argument("<query>")
   .action(async (query) => {
     // TODO: Output as a string

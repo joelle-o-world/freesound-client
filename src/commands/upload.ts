@@ -6,6 +6,7 @@ import { Command } from "commander";
 export const upload = new Command()
   .name("upload")
   .argument("<files...>")
+  .description("Upload sounds from your computer")
   .action(async (files) => {
     for (const file of files) {
       const filepath = resolve(file);

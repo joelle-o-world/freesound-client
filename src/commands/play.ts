@@ -4,6 +4,7 @@ import { play as nodePlay } from "../play";
 
 export const play = new Command()
   .name("play")
+  .description("Download and play a sound")
   .argument("<sound-id>", "ID of the sound to play")
   .action(async (soundId) => {
     const savePath = await nodeDownload(soundId);
