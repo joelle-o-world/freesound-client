@@ -12,11 +12,10 @@ const command = process.argv[2];
 const rcfile = new RCFile("freesound");
 
 (async function main() {
-  // TODO: Delay this step until it is needed (laziness)
-  const freesound = await login();
+  const freesound = login();
 
   async function download(soundId: string) {
-    const { type, stream } = await freesound.download(soundId);
+    const { type, stream } = await (await freesound).download(soundId);
 
     const saveDir = await rcfile.askAndStore("saveLocation");
     const filename = `${soundId}.${type}`;
@@ -50,29 +49,29 @@ const rcfile = new RCFile("freesound");
   // TODO: Move the command definitions to external module
   switch (command) {
     case "whoami":
-      console.log(YAML.stringify((await freesound.me()).username));
+      console.log(YAML.stringify((await (await freesound).me()).username));
       break;
 
     case "my-sounds":
-      console.log(YAML.stringify(await freesound.mySounds()));
+      console.log(YAML.stringify(await (await freesound).mySounds()));
       break;
 
     case "search":
       // TODO: Output as a string
       let limit = 20;
-      for await (const result of freesound.search(subArgs[0])) {
+      for await (const result of (await freesound).search(subArgs[0])) {
         console.log(`${result.id} - ${result.name}`);
         if (--limit == 0) break;
       }
       break;
 
     case "info":
-      const response = await freesound.soundInfo(subArgs[0]);
+      const response = await (await freesound).soundInfo(subArgs[0]);
       console.log(YAML.stringify(response));
       break;
 
     case "uri":
-      const downloadLink = await freesound.downloadLink(subArgs[0]);
+      const downloadLink = await (await freesound).downloadLink(subArgs[0]);
       console.log(downloadLink);
       break;
 
@@ -88,7 +87,7 @@ const rcfile = new RCFile("freesound");
       break;
 
     case "search-and-play":
-      for await (const result of freesound.search(subArgs[0])) {
+      for await (const result of (await freesound).search(subArgs[0])) {
         console.log(`${result.id} -> ${result.name}`);
         console.log("\tDownloading...");
         const file = await download(result.id);
@@ -104,7 +103,9 @@ const rcfile = new RCFile("freesound");
         const filename = basename(filepath);
         console.log("Trying to upload", filepath);
         const stream = createReadStream(filepath);
-        await freesound.upload(stream, {
+        await (
+          await freesound
+        ).upload(stream, {
           name: filename,
           description: "A sound uploaded with freesound cli",
           tags: [...path.parse(filename).name.split(/\W/)],
