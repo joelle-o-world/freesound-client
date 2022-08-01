@@ -1,10 +1,16 @@
+import { Command } from "commander";
 import { login } from "../connect";
 
-export async function search(argv: string[]) {
-  // TODO: Output as a string
-  let limit = 20;
-  for await (const result of (await login()).search(argv[0])) {
-    console.log(`${result.id} - ${result.name}`);
-    if (--limit == 0) break;
-  }
-}
+// TODO: Add limit option
+
+export const search = new Command()
+  .name("search")
+  .argument("<query>")
+  .action(async (query) => {
+    // TODO: Output as a string
+    let limit = 20;
+    for await (const result of (await login()).search(query)) {
+      console.log(`${result.id} - ${result.name}`);
+      if (--limit == 0) break;
+    }
+  });

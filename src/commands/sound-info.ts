@@ -1,12 +1,19 @@
 import { login } from "../connect";
 import YAML from "yaml";
+import { Command } from "commander";
 
-export async function info(argv: string[]) {
-  const response = await (await login()).soundInfo(argv[0]);
-  console.log(YAML.stringify(response));
-}
+export const info = new Command()
+  .name("info")
+  .argument("<sound-id>", "ID of the sound to play")
+  .action(async (soundId) => {
+    const response = await (await login()).soundInfo(soundId);
+    console.log(YAML.stringify(response));
+  });
 
-export async function uri(argv: string[]) {
-  const downloadLink = await (await login()).downloadLink(argv[0]);
-  console.log(downloadLink);
-}
+export const uri = new Command()
+  .name("uri")
+  .argument("<sound-id>", "ID of the sound to play")
+  .action(async (soundId) => {
+    const downloadLink = await (await login()).downloadLink(soundId);
+    console.log(downloadLink);
+  });

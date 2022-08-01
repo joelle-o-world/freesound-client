@@ -1,22 +1,14 @@
 #! /usr/local/bin/node
 
+import { Command } from "commander";
+const program = new Command();
+
 import * as commands from "./commands";
+for (let name in commands) {
+  const implementation = commands[name as keyof typeof commands];
+  if (implementation instanceof Command) {
+    program.addCommand(implementation);
+  } else program.command(name).action(implementation);
+}
 
-(async function main() {
-  const command = process.argv[2];
-  const subArgs = process.argv.slice(3);
-
-  if (!command) {
-    return commands.help();
-  }
-
-  // @ts-ignore
-  const commandImplementation = commands[command];
-  if (commandImplementation) {
-    const exitCode = await commandImplementation(subArgs);
-    process.exit(exitCode);
-  } else {
-    console.error(`Unexpected command '${command}'`);
-    process.exit(1);
-  }
-})();
+program.parse();
