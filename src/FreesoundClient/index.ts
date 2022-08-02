@@ -1,9 +1,9 @@
-import axios, { AxiosInstance } from "axios";
+import axios, {AxiosInstance} from "axios";
 import qs from "qs";
 import FormData from "form-data";
-import { Readable } from "stream";
+import {Readable} from "stream";
 
-const timeout = 5000;
+const timeout = 30000;
 
 export class FreesoundClient {
   private axios: AxiosInstance;
@@ -55,7 +55,7 @@ export class FreesoundClient {
     if (this.clientId)
       return this.axios.getUri({
         url: "oauth2/authorize/",
-        params: { client_id: this.clientId, response_type: "code" },
+        params: {client_id: this.clientId, response_type: "code"},
       });
     else throw "Cannot get login page url without client id";
   }
@@ -135,7 +135,7 @@ export class FreesoundClient {
 
   async *search(searchText: string) {
     for await (let result of this.page("search/text", {
-      params: { query: searchText },
+      params: {query: searchText},
     }))
       yield result;
   }
@@ -159,7 +159,7 @@ export class FreesoundClient {
       packName = packInfo.name;
     }
     const uri = soundInfo.download;
-    const response = await this.axios.get(uri, { responseType: "stream" });
+    const response = await this.axios.get(uri, {responseType: "stream"});
     return {
       type: soundInfo.type,
       stream: response.data,
@@ -175,9 +175,9 @@ export class FreesoundClient {
     options: {
       name: string;
       license?:
-        | "Attribution"
-        | "Attribution Noncommercial"
-        | "Creative Commons 0";
+      | "Attribution"
+      | "Attribution Noncommercial"
+      | "Creative Commons 0";
       description: string;
       tags: string[];
       pack?: string;
