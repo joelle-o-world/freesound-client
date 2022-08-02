@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "yarn tsc",
-    "dev": "yarn tsc -w"
+    "dev": "yarn tsc -w",
+    "typecheck": "yarn tsc --noEmit"
   },
   "bin": {
     "freesound": "./bin/main.js"
