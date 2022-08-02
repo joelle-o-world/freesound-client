@@ -1,6 +1,7 @@
 import { login } from "../connect";
 import YAML from "yaml";
 import { Command } from "commander";
+import { download } from "../node-download";
 
 const packList = new Command()
   .name("list")
@@ -24,6 +25,19 @@ const packInfo = new Command()
     console.log(YAML.stringify(response.data));
   });
 
+const downloadPack = new Command()
+  .name("download")
+  .description("Download a sample pack")
+  .argument("<pack-id>", "The id of the pack you want to download")
+  .action(async (packId) => {
+    const freesound = await login();
+    for await (const sound of freesound.listSoundsInPack(packId)) {
+      const savePath = await download(sound.id);
+      console.log(savePath);
+    }
+  });
+
 export const pack = new Command("pack")
   .addCommand(packList)
-  .addCommand(packInfo);
+  .addCommand(packInfo)
+  .addCommand(downloadPack);
