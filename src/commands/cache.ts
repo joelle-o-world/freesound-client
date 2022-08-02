@@ -16,6 +16,15 @@ const wipeDownloads = new Command("wipe")
     } else console.error("Cancelled.");
   });
 
+const cacheLocation = new Command()
+  .name("location")
+  .alias("where")
+  .description("Where is my freesound cli downloads directory?")
+  .action(async () => {
+    console.log(await rcfile.askAndStore("saveLocation"));
+  });
+
 export const cache = new Command("cache")
   .description("Manage freesound samples cached on your local machine")
-  .addCommand(wipeDownloads);
+  .addCommand(wipeDownloads)
+  .addCommand(cacheLocation);
