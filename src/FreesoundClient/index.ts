@@ -106,7 +106,11 @@ export class FreesoundClient {
 
   async *mySounds() {
     const uri = (await this.me()).sounds;
-    console.log(uri);
+    for await (const result of this.page(uri)) yield result;
+  }
+
+  async *myPacks() {
+    const uri = (await this.me()).packs;
     for await (const result of this.page(uri)) yield result;
   }
 

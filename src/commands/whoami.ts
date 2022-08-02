@@ -21,10 +21,19 @@ const username = new Command("username")
     console.log(YAML.stringify((await (await login()).me()).username));
   });
 
+const packs = new Command("packs")
+  .description("List you own sample packs")
+  .action(async () => {
+    const freesound = await login();
+    const packs = freesound.myPacks();
+    for await (const pack of packs) console.log(pack.id, "-", pack.name);
+  });
+
 export const my = new Command("my")
   .addCommand(sounds)
   .addCommand(whoami)
-  .addCommand(username);
+  .addCommand(username)
+  .addCommand(packs);
 
 export const pending = new Command("pending")
   .description("Fetch a list of your pending uploads")
