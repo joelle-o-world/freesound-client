@@ -3,7 +3,7 @@ import { askQuestion } from "../askQuestion";
 import { rcfile } from "../config";
 import fs from "fs/promises";
 
-export const wipeDownloads = new Command("wipe-downloads")
+const wipeDownloads = new Command("wipe")
   .description("Wipe the freesound cli downloads directory")
   .action(async () => {
     const saveDir = await rcfile.askAndStore("saveLocation");
@@ -15,3 +15,7 @@ export const wipeDownloads = new Command("wipe-downloads")
       await fs.mkdir(saveDir);
     } else console.error("Cancelled.");
   });
+
+export const cache = new Command("cache")
+  .description("Manage freesound samples cached on your local machine")
+  .addCommand(wipeDownloads);
