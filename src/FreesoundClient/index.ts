@@ -110,6 +110,10 @@ export class FreesoundClient {
     for await (const result of this.page(uri)) yield result;
   }
 
+  async pendingUploads() {
+    return (await this.axios.get(`sounds/pending_uploads`)).data;
+  }
+
   private async *page(...args: Parameters<typeof this.axios.get>) {
     try {
       let response = await this.axios.get(...args);

@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { searchAndPlay } from "./searchAndPlay";
-import { my, whoami } from "./whoami";
+import { my, whoami, pending } from "./whoami";
 import { search } from "./search";
 import { download } from "./download";
 import { upload } from "./upload";
@@ -18,4 +18,5 @@ export const program = new Command()
   .addCommand(download)
   .addCommand(upload)
   .addCommand(pack)
-  .addCommand(play);
+  .addCommand(play)
+  .addCommand(pending);

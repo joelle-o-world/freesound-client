@@ -25,3 +25,18 @@ export const my = new Command("my")
   .addCommand(sounds)
   .addCommand(whoami)
   .addCommand(username);
+
+export const pending = new Command("pending")
+  .description("Fetch a list of your pending uploads")
+  .action(async () => {
+    const freesound = await login();
+    const { pending_description, pending_moderation, pending_processing } =
+      await freesound.pendingUploads();
+
+    for (const sound of [
+      ...pending_description,
+      ...pending_processing,
+      ...pending_moderation,
+    ])
+      console.log(sound.id, "-", sound.name);
+  });
