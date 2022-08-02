@@ -1,6 +1,5 @@
 import { login } from "../connect";
 import YAML from "yaml";
-import all from "it-all";
 import { Command } from "commander";
 
 export const whoami = new Command("whoami")
@@ -12,7 +11,9 @@ export const whoami = new Command("whoami")
 export const sounds = new Command("sounds")
   .description("List your own uploaded freesound samples")
   .action(async () => {
-    console.log(YAML.stringify(await all((await login()).mySounds())));
+    const freesound = await login();
+    for await (const sound of freesound.mySounds())
+      console.log(sound.id, "-", sound.name);
   });
 
 const username = new Command("username")
