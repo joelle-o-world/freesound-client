@@ -152,9 +152,22 @@ export class FreesoundClient {
 
   async download(soundId: string) {
     const soundInfo = await this.soundInfo(soundId);
+    let packId, packName;
+    if (soundInfo.pack) {
+      const packInfo = (await this.axios.get(soundInfo.pack)).data;
+      packId = packInfo.id;
+      packName = packInfo.name;
+    }
     const uri = soundInfo.download;
     const response = await this.axios.get(uri, { responseType: "stream" });
-    return { type: soundInfo.type, stream: response.data };
+    return {
+      type: soundInfo.type,
+      stream: response.data,
+      soundId,
+      name: soundInfo.name,
+      packId,
+      packName,
+    };
   }
 
   async upload(
