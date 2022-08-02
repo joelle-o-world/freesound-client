@@ -31,7 +31,6 @@ const packs = new Command("packs")
 
 export const my = new Command("my")
   .addCommand(sounds)
-  .addCommand(whoami)
   .addCommand(username)
   .addCommand(packs);
 
