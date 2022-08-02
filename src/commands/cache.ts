@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { askQuestion } from "../askQuestion";
 import { rcfile } from "../config";
 import fs from "fs/promises";
+import open from "open";
 
 const wipeDownloads = new Command("wipe")
   .description("Wipe the freesound cli downloads directory")
@@ -24,7 +25,16 @@ const cacheLocation = new Command()
     console.log(await rcfile.askAndStore("saveLocation"));
   });
 
+const openCache = new Command()
+  .name("open")
+  .description("Open the downloads directory in your native file manager")
+  .action(async () => {
+    const saveDir = await rcfile.askAndStore("saveLocation");
+    open(saveDir);
+  });
+
 export const cache = new Command("cache")
   .description("Manage freesound samples cached on your local machine")
-  .addCommand(wipeDownloads)
-  .addCommand(cacheLocation);
+  .addCommand(cacheLocation)
+  .addCommand(openCache)
+  .addCommand(wipeDownloads);
