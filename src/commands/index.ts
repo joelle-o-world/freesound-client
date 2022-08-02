@@ -7,6 +7,7 @@ import { upload } from "./upload";
 import { pack } from "./packInfo";
 import { play } from "./play";
 import { info, uri } from "./sound-info";
+import { wipeDownloads } from "./management";
 
 export const program = new Command()
   .addCommand(whoami)
@@ -19,4 +20,5 @@ export const program = new Command()
   .addCommand(upload)
   .addCommand(pack)
   .addCommand(play)
+  .addCommand(wipeDownloads)
   .addCommand(pending);
