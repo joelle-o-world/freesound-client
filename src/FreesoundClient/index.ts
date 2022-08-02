@@ -163,6 +163,7 @@ export class FreesoundClient {
         | "Creative Commons 0";
       description: string;
       tags: string[];
+      pack?: string;
     }
   ) {
     const form = new FormData();
@@ -171,6 +172,7 @@ export class FreesoundClient {
     form.append("audiofile", stream);
     form.append("description", options.description);
     form.append("tags", options.tags.join(" "));
+    if (options.pack) form.append("pack", options.pack);
 
     try {
       await this.axios.post("sounds/upload/", form);

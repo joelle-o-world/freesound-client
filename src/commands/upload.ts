@@ -13,6 +13,7 @@ export const upload = new Command()
     "Describe your the sound",
     "A sound uploaded with freesound cli"
   )
+  .option("--pack <name>", "The name of the freesound pack to upload into")
   .option(
     "-t|--tags <comma-separated-list>",
     "Comma-separated-list of tags to attach to the uploaded sounds"
@@ -35,6 +36,7 @@ export const upload = new Command()
         name: filename,
         description: options.description,
         tags,
+        pack: options.pack,
       });
     }
   });
